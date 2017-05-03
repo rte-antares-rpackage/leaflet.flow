@@ -15,5 +15,9 @@
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-uglify": "^2.3.0",
     "grunt-contrib-watch": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FrancoisGuillem/leaflet.flow.git"
   }
 }
