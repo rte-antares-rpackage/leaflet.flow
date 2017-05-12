@@ -29,9 +29,12 @@ Methods:
   L.Flow = L.Polyline.extend({
     options: {
       color: "blue",
-      weight: 3,
+      value: 0.2,
+      maxValue: 1,
+      minThickness:1,
+      maxThickness:20,
       opacity: 1,
-      dir: 1,
+      dir: "auto",
       transitionTime: 750
     },
 
@@ -82,13 +85,23 @@ Methods:
         angle = 180 + angle;
       }
 
+      // thickness of the line
+      var weight = this.options.minThickness +
+                     Math.abs(this.options.value) / this.options.maxValue *
+                     (this.options.maxThickness - this.options.minThickness);
+
+      // direction
+      var dir;
+      if (this.options.dir == "auto") dir = Math.sign(this.options.value);
+      else dir = this.options.dir;
+
       // Place and rotate
       var transform = L.Util.template(
         "rotate({a}) scale({sx},{sy})",
         {
           a: angle,
-          sx: 0.35 * Math.pow(this.options.weight, 2/3) * this.options.dir,
-          sy: 0.35 * Math.pow(this.options.weight, 2/3)
+          sx: 0.35 * Math.pow(weight, 2/3) * dir,
+          sy: 0.35 * Math.pow(weight, 2/3)
         }
       );
 
@@ -103,7 +116,7 @@ Methods:
 
       d3.select(self._path).transition()
         .duration(duration)
-        .attr("stroke-width", self.options.weight)
+        .attr("stroke-width", weight)
         .attr("stroke", self.options.color)
         .attr("stroke-opacity", self.options.opacity);
     },
