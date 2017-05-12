@@ -92,8 +92,11 @@ Methods:
 
       // direction
       var dir;
-      if (this.options.dir == "auto") dir = Math.sign(this.options.value);
-      else dir = this.options.dir;
+      if (this.options.dir == "auto") {
+        dir = this.options.value < 0? -1:
+                this.options.value > 0? 1:
+                0;
+      } else dir = this.options.dir;
 
       // Place and rotate
       var transform = L.Util.template(
