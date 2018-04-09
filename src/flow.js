@@ -184,8 +184,6 @@ Methods:
       );
 
       if(this._arrowContainer){
-        console.info("this._arrowContainer")
-        console.info(middle)
         this._arrowContainer
           .attr("transform", "translate(" + middle.x + "," + middle.y + ")")
       }
