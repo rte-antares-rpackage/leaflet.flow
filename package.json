@@ -1,6 +1,6 @@
 {
   "name": "leaflet.flow",
-  "version": "0.2.1",
+  "version": "0.2.4",
   "description": "Leaflet plugin to represent flows between two points.",
   "main": "src/flow.js",
   "scripts": {
@@ -18,6 +18,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/FrancoisGuillem/leaflet.flow.git"
+    "url": "https://github.com/rte-antares-rpackage/leaflet.flow.git"
   }
 }

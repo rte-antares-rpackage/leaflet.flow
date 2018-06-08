@@ -46,13 +46,14 @@ Methods:
 
     onAdd: function(map) {
       L.Polyline.prototype.onAdd.call(this, map);
-
+      
       var container = this._container || this._renderer._rootGroup;
       container.setAttribute("class", "leaflet-zoom-hide");
 
       this._arrowContainer = d3.select(container).append("g");
+      
       if (L.version >= "1.0") this.addInteractiveTarget(this._arrowContainer.node());
-
+       
       this._arrow = this._arrowContainer.append("path")
         .attr("d", "M -10,-10 -10,10 10,0 Z")
         .attr("class", "leaflet-clickable leaflet-interactive");
@@ -64,11 +65,19 @@ Methods:
 
     onRemove: function(map) {
       L.Polyline.prototype.onRemove.call(this, map);
+      this._arrowContainer.selectAll("*").remove();
       map.off('viewreset', this._reset, this);
     },
 
     _reset: function(duration) {
+    
       var self = this;
+      
+      if(L.Polyline.prototype._reset){
+        L.Polyline.prototype._reset.call(this);
+      }
+      
+      
       if (typeof duration != "number") {
         duration = this.options.transitionTime;
       }
@@ -108,15 +117,19 @@ Methods:
         }
       );
 
-      this._arrowContainer
-        .attr("transform", "translate(" + middle.x + "," + middle.y + ")")
+      if(this._arrowContainer){
+        this._arrowContainer
+          .attr("transform", "translate(" + middle.x + "," + middle.y + ")")
+      }
 
-      this._arrow.transition()
-        .duration(duration)
-        .attr("transform", transform)
-        .attr("fill", self.options.color)
-        .attr("fill-opacity", self.options.opacity);
-
+      if(this._arrow){
+        this._arrow.transition()
+          .duration(duration)
+          .attr("transform", transform)
+          .attr("fill", self.options.color)
+          .attr("fill-opacity", self.options.opacity);
+      }
+      
       d3.select(self._path).transition()
         .duration(duration)
         .attr("stroke-width", weight)
@@ -124,6 +137,74 @@ Methods:
         .attr("stroke-opacity", self.options.opacity);
     },
 
+    _update: function(duration) {
+    
+      if(L.Polyline.prototype._update){
+        L.Polyline.prototype._update.call(this);
+      }
+      
+      var self = this;
+      
+      if (typeof duration != "number") {
+        duration = this.options.transitionTime;
+      }
+
+      var p1 = this._map.latLngToLayerPoint(this._start);
+      var p2 = this._map.latLngToLayerPoint(this._end);
+
+      // Middle point
+      var middle = {x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2};
+      // Angle of the line
+      var angle = Math.atan((p2.y - p1.y) / (p2.x - p1.x));
+      angle = angle / Math.PI * 180;
+      if (p2.x - p1.x < 0) {
+        angle = 180 + angle;
+      }
+
+      // thickness of the line
+      var weight = this.options.minThickness +
+                     Math.abs(this.options.value) / this.options.maxValue *
+                     (this.options.maxThickness - this.options.minThickness);
+
+      // direction
+      var dir;
+      if (this.options.dir == "auto") {
+        dir = this.options.value < 0? -1:
+                this.options.value > 0? 1:
+                0;
+      } else dir = this.options.dir;
+
+      // Place and rotate
+      var transform = L.Util.template(
+        "rotate({a}) scale({sx},{sy})",
+        {
+          a: angle,
+          sx: 0.35 * Math.pow(weight, 2/3) * dir,
+          sy: 0.35 * Math.pow(weight, 2/3)
+        }
+      );
+
+      if(this._arrowContainer){
+        this._arrowContainer
+          .attr("transform", "translate(" + middle.x + "," + middle.y + ")")
+      }
+
+      if(this._arrow){
+        this._arrow.transition()
+          .duration(duration)
+          .attr("transform", transform)
+          .attr("fill", self.options.color)
+          .attr("fill-opacity", self.options.opacity);
+      }
+      
+      d3.select(self._path).transition()
+        .duration(duration)
+        .attr("stroke-width", weight)
+        .attr("stroke", self.options.color)
+        .attr("stroke-opacity", self.options.opacity);
+    },
+    
+    
     setStyle: function(options) {
       //L.Polyline.prototype.setStyle.call(this, options);
       L.Util.setOptions(this, options);
