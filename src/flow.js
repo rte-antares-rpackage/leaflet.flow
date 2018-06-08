@@ -65,6 +65,7 @@ Methods:
 
     onRemove: function(map) {
       L.Polyline.prototype.onRemove.call(this, map);
+      this._arrowContainer.selectAll("*").remove();
       map.off('viewreset', this._reset, this);
     },
 
