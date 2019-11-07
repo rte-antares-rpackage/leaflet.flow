@@ -87,6 +87,7 @@ Methods:
 
       // Middle point
       var middle = {x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2};
+      
       // Angle of the line
       var angle = Math.atan((p2.y - p1.y) / (p2.x - p1.x));
       angle = angle / Math.PI * 180;
@@ -94,10 +95,18 @@ Methods:
         angle = 180 + angle;
       }
 
+      if (isNaN(angle)) {
+        angle = 0;
+      }
+      
       // thickness of the line
       var weight = this.options.minThickness +
                      Math.abs(this.options.value) / this.options.maxValue *
                      (this.options.maxThickness - this.options.minThickness);
+      
+      if (isNaN(weight)) {
+        weight = 0;
+      }
 
       // direction
       var dir;
@@ -107,6 +116,7 @@ Methods:
                 0;
       } else dir = this.options.dir;
 
+      
       // Place and rotate
       var transform = L.Util.template(
         "rotate({a}) scale({sx},{sy})",
@@ -161,11 +171,18 @@ Methods:
         angle = 180 + angle;
       }
 
+      if (isNaN(angle)) {
+        angle = 0;
+      }
       // thickness of the line
       var weight = this.options.minThickness +
                      Math.abs(this.options.value) / this.options.maxValue *
                      (this.options.maxThickness - this.options.minThickness);
 
+      if (isNaN(weight)) {
+        weight = 0;
+      }
+      
       // direction
       var dir;
       if (this.options.dir == "auto") {
